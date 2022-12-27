@@ -1,10 +1,11 @@
 import java.text.DecimalFormat;
 
 public class ValueCalculator {
-    private int arraySize = 1000; // 1000 x 1000 = 1 000 0000 элементов массива
-    private double[][] array = new double[arraySize][arraySize];
-    double[][] a1;
-    double[][] a2;
+
+    private int arraySize = 1000000; // 1 000 0000 элементов массива
+    private double[] array = new double[arraySize];
+    double[] a1;
+    double[] a2;
     private long startTime;
     private long finishTime;
 
@@ -13,69 +14,56 @@ public class ValueCalculator {
 
         //заполнение перевого массива
         for (int i = 0; i < arraySize; i++) {
-            for (int j = 0; j < arraySize; j++) {
-                //array[i][j] = Math.random();          // заполнение исх. массива случ. значениями (от 0 до 1)
-                array[i][j] = 1;
-            }
+//                array[i] = Math.random();          // заполнение исх. массива случ. значениями (от 0 до 1)
+                array[i] = 1;
         }
 
-        // опредедение половины строк в первом массиве? пополам или первый из
+        // опредедение половины строк в первом массиве, пополам или первый из
         // двух созданных массивов будет на 1 строку меньше
         int half = (int) Math.floor(array.length) / 2;
 
-        // проверка исходного массива и определение макс. длины строки
-        // в исходном массиве
-        int maxRowLength = 0;
-        for (int i = 0; i < array.length; i++) {
-            if (maxRowLength <= array[i].length) {
-                maxRowLength = array[i].length;
-            }
-        }
-
         // создаються второй и третий массивы
-        a1 = new double[half][maxRowLength];
+        a1 = new double[half];
         System.arraycopy(array, 0, a1, 0, half);
 
         if (array.length % 2 != 0) {
-            // количество строк нечетное
-            a2 = new double[half + 1][maxRowLength];
+            // количество элементов первого массива нечетное
+            a2 = new double[half + 1];
             System.arraycopy(array, half, a2, 0, half + 1);
         } else {
-            // количество строк четное
-            a2 = new double[half][maxRowLength];
+            // количество элементов первого массива четное
+            a2 = new double[half];
             System.arraycopy(array, half, a2, 0, half);
         }
 
         Thread thread01 = new Thread(new Thread01(a1, 1));
-//        thread01.run();
-        thread01.start();
+//        thread01.run();     // вычисления будут выполнены в текущем потоке
+        thread01.start();   // вычисления будут выполнены в новом потоке
 
         Thread thread02 = new Thread(new Thread01(a2, 2));
-//        thread02.run();
-        thread02.start();
+//        thread02.run();   // вычисления будут выполнены в текущем потоке
+        thread02.start();   // вычисления будут выполнены в новом потоке
 
         System.arraycopy(a1, 0, array, 0, half);
         if (array.length % 2 != 0) {
-            // количество строк нечетное
+            // количество элементов первого массива нечетное
             System.arraycopy(a2, 0, array, half, half+1);
         } else {
-            // количество строк четное
+            // количество элементов первого массива четное
             System.arraycopy(a2, 0, array, half, half);
         }
 
         finishTime = System.currentTimeMillis() - startTime;
-        System.out.println("total time: " + (double) finishTime / 1000);
+        System.out.println("total time: " + (double) finishTime / 1000 + " s");
     }
 
-    // метод печатает массив с округлением, для наглядности
-    private void printArray(double[][] arr) {
+    // метод печатает массив с округлением, использовался на малых
+    // размерах массива для проверки работоспособности программы
+    private void printArray(double[] arr) {
 
         DecimalFormat df = new DecimalFormat("0.0000");
         for (int i = 0; i < arr.length; i++) {
-            for (int j = 0; j < arr[i].length; j++) {
-                System.out.print(df.format(arr[i][j]) + " ");
-            }
-            System.out.println();
+                System.out.print(df.format(arr[i]) + " ");
         }
         System.out.println();
     }

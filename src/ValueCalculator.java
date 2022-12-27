@@ -47,10 +47,12 @@ public class ValueCalculator {
         }
 
         Thread thread01 = new Thread(new Thread01(a1, 1));
-        thread01.run();
+//        thread01.run();
+        thread01.start();
 
         Thread thread02 = new Thread(new Thread01(a2, 2));
-        thread02.run();
+//        thread02.run();
+        thread02.start();
 
         System.arraycopy(a1, 0, array, 0, half);
         if (array.length % 2 != 0) {
